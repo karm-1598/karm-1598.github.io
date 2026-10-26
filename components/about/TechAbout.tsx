@@ -15,7 +15,7 @@ type TechAboutProps = {
   capabilities: Capability[];
   experiences: ExperienceEntry[];
   projects: Project[];
-  location: string;
+  location?: string;
   role: string;
 };
 
@@ -194,12 +194,14 @@ export default function TechAbout({
                     </ul>
                   </dd>
                 </div>
-                <div className="pb-0 pt-4">
-                  <dt className="font-mono text-[0.625rem] tracking-[0.14em] text-muted">
-                    LOCATION
-                  </dt>
-                  <dd className="mt-2 text-sm text-foreground/75">{location}</dd>
-                </div>
+                {location ? (
+                  <div className="pb-0 pt-4">
+                    <dt className="font-mono text-[0.625rem] tracking-[0.14em] text-muted">
+                      LOCATION
+                    </dt>
+                    <dd className="mt-2 text-sm text-foreground/75">{location}</dd>
+                  </div>
+                ) : null}
               </dl>
             </GlassCard>
           </motion.aside>

@@ -1,5 +1,6 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { ArrowUpRight } from "lucide-react";
 import { motion } from "motion/react";
@@ -20,6 +21,11 @@ const storeLinks = [
   },
 ];
 
+// Project preview images when files are provided in /public/projects/
+const projectPreviewImages: Partial<
+  Record<Project["visual"], { src: string; alt: string }>
+> = {};
+
 function ProjectCard({
   project,
   index,
@@ -28,6 +34,7 @@ function ProjectCard({
   index: number;
 }) {
   const shouldReduceMotion = useReducedMotion();
+  const preview = projectPreviewImages[project.visual];
 
   return (
     <motion.article
@@ -47,26 +54,21 @@ function ProjectCard({
       }
       whileInView={{ opacity: 1, y: 0, rotateX: 0 }}
     >
-      <GlassCard className="flex h-full min-h-[30rem] flex-col overflow-hidden p-0 sm:min-h-[32rem]">
-        <div
-          aria-label={`TODO: Add approved preview image for ${project.title}`}
-          className="relative m-3 grid min-h-48 place-items-center overflow-hidden rounded-[calc(var(--radius-panel)-0.4rem)] border border-white/[0.09] bg-black/25 sm:m-4 sm:min-h-56"
-          role="img"
-        >
-          <div
-            aria-hidden="true"
-            className="absolute inset-0 bg-[linear-gradient(135deg,rgba(140,228,209,0.055),transparent_46%,rgba(130,152,255,0.07))]"
-          />
-          <div
-            aria-hidden="true"
-            className="absolute inset-x-[16%] inset-y-[14%] rounded-[1.15rem] border border-white/[0.1]"
-          />
-          <span className="relative rounded-full border border-border bg-background/75 px-4 py-2 font-mono text-[0.625rem] tracking-[0.12em] text-muted backdrop-blur-md">
-            PROJECT PREVIEW / TODO
-          </span>
-        </div>
+      <GlassCard className="flex h-full flex-col overflow-hidden p-5 sm:p-7">
+        {preview ? (
+          <div className="relative mb-5 overflow-hidden rounded-[calc(var(--radius-panel)-0.4rem)] border border-white/[0.09]">
+            <Image
+              alt={preview.alt}
+              className="h-auto w-full object-cover"
+              height={450}
+              src={preview.src}
+              unoptimized
+              width={800}
+            />
+          </div>
+        ) : null}
 
-        <div className="flex flex-1 flex-col px-5 pb-5 sm:px-7 sm:pb-7">
+        <div className="flex flex-1 flex-col">
           <div className="flex items-start justify-between gap-4">
             <span className="font-mono text-xs text-accent">
               {project.number}

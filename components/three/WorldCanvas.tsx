@@ -30,7 +30,6 @@ import {
   scrollSnapshot,
   setPageProgress,
   setZoneProgress,
-  type ZoneId,
   zoneIds,
 } from "@/lib/scroll-store";
 
@@ -811,18 +810,6 @@ function SceneContent({ profile }: { profile: DeviceProfile }) {
 function WorldCanvas() {
   const profile = useDeviceProfile();
   const [visible, setVisible] = useState(true);
-  const [debug, setDebug] = useState<{
-    progress: number;
-    fps: number;
-    zone: ZoneId;
-    zoneProgress: number;
-  }>({
-    progress: 0,
-    fps: 0,
-    zone: zoneIds[0],
-    zoneProgress: 0,
-  });
-  const frameCount = useRef(0);
 
   useEffect(() => {
     const onVisibilityChange = () => setVisible(!document.hidden);
@@ -831,94 +818,29 @@ function WorldCanvas() {
       document.removeEventListener("visibilitychange", onVisibilityChange);
   }, []);
 
-  useEffect(() => {
-    if (process.env.NODE_ENV !== "development") return;
-
-    let previousTime = performance.now();
-    let frameId = 0;
-    let frames = 0;
-    const updateDebug = (time: number) => {
-      frames += frameCount.current;
-      frameCount.current = 0;
-      const elapsed = time - previousTime;
-      if (elapsed >= 1000) {
-        const zoneIndex = Math.min(
-          zoneIds.length - 1,
-          Math.floor(scrollSnapshot.progress * zoneIds.length + 1e-6),
-        );
-        setDebug({
-          progress: scrollSnapshot.progress,
-          fps: Math.round((frames * 1000) / elapsed),
-          zone: zoneIds[zoneIndex],
-          zoneProgress: scrollSnapshot.zones[zoneIds[zoneIndex]],
-        });
-        frames = 0;
-        previousTime = time;
-      }
-      frameId = requestAnimationFrame(updateDebug);
-    };
-    const handleVisibilityChange = () => {
-      cancelAnimationFrame(frameId);
-      if (document.hidden) return;
-      previousTime = performance.now();
-      frameId = requestAnimationFrame(updateDebug);
-    };
-    document.addEventListener("visibilitychange", handleVisibilityChange);
-    frameId = requestAnimationFrame(updateDebug);
-    return () => {
-      cancelAnimationFrame(frameId);
-      document.removeEventListener("visibilitychange", handleVisibilityChange);
-    };
-  }, []);
-
-  function countFrame() {
-    frameCount.current += 1;
-  }
-
   return (
-    <>
-      <Canvas
-        camera={{ position: [0, 1.4, 16], fov: 38, near: 0.1, far: 70 }}
-        dpr={profile.dpr}
-        frameloop={
-          !visible ? "never" : profile.reducedMotion ? "demand" : "always"
-        }
-        gl={{
-          alpha: true,
-          antialias: profile.highQuality,
-          powerPreference: "high-performance",
-          stencil: false,
-          depth: true,
-        }}
-        onCreated={({ gl }) => {
-          gl.setClearColor("#080b0e", 1);
-          gl.outputColorSpace = "srgb";
-        }}
-        onPointerMissed={() => mouse.set(0, 0)}
-      >
-        <FrameCounter onFrame={countFrame} />
-        <SceneContent profile={profile} />
-      </Canvas>
-      {process.env.NODE_ENV === "development" ? (
-        <div
-          aria-label="Descent scene performance"
-          className="pointer-events-none fixed bottom-3 right-3 z-50 rounded-lg border border-white/10 bg-black/70 px-3 py-2 font-mono text-[0.65rem] leading-5 text-white/75 backdrop-blur"
-        >
-          <div>SCROLL {debug.progress.toFixed(3)}</div>
-          <div>
-            ZONE {debug.zone.toUpperCase()} / {debug.zoneProgress.toFixed(2)}
-          </div>
-          <div>FPS {debug.fps}</div>
-          <div>QUALITY {profile.highQuality ? "HIGH" : "LOW"}</div>
-        </div>
-      ) : null}
-    </>
+    <Canvas
+      camera={{ position: [0, 1.4, 16], fov: 38, near: 0.1, far: 70 }}
+      dpr={profile.dpr}
+      frameloop={
+        !visible ? "never" : profile.reducedMotion ? "demand" : "always"
+      }
+      gl={{
+        alpha: true,
+        antialias: profile.highQuality,
+        powerPreference: "high-performance",
+        stencil: false,
+        depth: true,
+      }}
+      onCreated={({ gl }) => {
+        gl.setClearColor("#080b0e", 1);
+        gl.outputColorSpace = "srgb";
+      }}
+      onPointerMissed={() => mouse.set(0, 0)}
+    >
+      <SceneContent profile={profile} />
+    </Canvas>
   );
-}
-
-function FrameCounter({ onFrame }: { onFrame: () => void }) {
-  useFrame(() => onFrame());
-  return null;
 }
 
 export default WorldCanvas;

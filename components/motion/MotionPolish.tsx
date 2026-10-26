@@ -29,7 +29,7 @@ export function SessionPreloader() {
     try {
       window.sessionStorage.setItem("karm-portfolio-intro-seen", "true");
     } catch {
-      console.warn("Session storage is unavailable; intro may replay.");
+      // Session storage is unavailable
     }
     const overlay = overlayRef.current;
     if (!overlay) return;
@@ -47,7 +47,7 @@ export function SessionPreloader() {
     try {
       if (window.sessionStorage.getItem(storageKey)) return;
     } catch {
-      console.warn("Session storage is unavailable; intro will be skipped.");
+      // Session storage is unavailable
       return;
     }
 
