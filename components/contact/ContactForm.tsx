@@ -132,7 +132,7 @@ export default function ContactForm() {
           autoComplete="email"
           className={fieldClassName}
           id="contact-email"
-          placeholder="you@example.com"
+          placeholder="Your email address"
           type="email"
           {...register("email")}
           aria-invalid={Boolean(errors.email)}

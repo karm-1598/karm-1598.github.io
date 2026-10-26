@@ -40,7 +40,7 @@ PERFORMANCE AND ACCESSIBILITY (non-negotiable)
 - No custom cursor on touch devices.
 
 RULES
-- Never invent projects, metrics, companies, dates or links. Use TODO placeholders and list them at the end.
+- Never invent projects, metrics, companies, dates or links. Omit unavailable details and list what information is still needed.
 - Run `npm run lint` and `npm run build` after every step and fix errors.
 - Work in phases. At the end of each phase, summarize and STOP for my approval.
 - Deployment target may be GitHub Pages (static export). Avoid server-only features unless I confirm Vercel.
